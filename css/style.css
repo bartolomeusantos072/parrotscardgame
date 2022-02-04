@@ -1,0 +1,48 @@
+body {
+    background-color: rgb(238, 249, 191);
+    height: 100vh;
+    display: flex;
+  }
+  h1 {
+    color: #75b79e;
+  }
+  section {
+    width: 640px;
+    height: 640px;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    perspective: 1000px;
+  }
+  .carta {
+    width: 25%;
+    height: 25%;
+    background-color: #a7e9af;
+    margin: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    /* transform: scale(1);
+    transform-style: preserve-3d;
+    transition: transform 0.5s; */
+  }
+  /* .carta:active {
+    transform: scale(0.97);
+    transition: transform 0.2s;
+  }
+  .carta.selecionado {
+    transform: rotateY(180deg);
+  }
+  .img-frente,
+  .img-verso {
+    width: 70%;
+    height: 70%;
+    position: absolute;
+    backface-visibility: hidden;
+  }
+  
+  .img-verso {
+    transform: rotateY(180deg);
+  } */
+  
