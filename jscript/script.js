@@ -1,58 +1,86 @@
-let imgLista = [];
 const listaImagens = [
-    "imagem/bobrossparrot.gif",
-    "imagem/explodyparrot.gif",
-    "imagem/metalparrot.gif",
-    "imagem/revertitparrot.gif",
-    "imagem/tripletsparrot.gif",
-    "imagem/unicornparrot.gif",
-    "imagem/fiestaparrot.gif"
-  ];
+  "imagem/bobrossparrot.gif",
+  "imagem/explodyparrot.gif",
+  "imagem/metalparrot.gif",
+  "imagem/revertitparrot.gif",
+  "imagem/tripletsparrot.gif",
+  "imagem/unicornparrot.gif",
+  "imagem/fiestaparrot.gif"
+];
 
-function iniciarJogo(){
-    let quantidade = 0;
-    do {
-            quantidade = prompt("Escolha uma quantidade de cartas");
-    } while (quantidade < 4 || quantidade > 14 || quantidade % 2 === 1);
+let primeiraCarta = null;
+let segundaCarta = null;
+let bloqueiaClique = false;
+let jogadas = 0;
 
-    darAsCartas(quantidade);
-    document.querySelector("button").style.display = "none";
+function iniciarJogo() {
+  let quantidade = 0;
+  do {
+    quantidade = prompt("Escolha uma quantidade de cartas (par, entre 4 e 14):");
+  } while (quantidade < 4 || quantidade > 14 || quantidade % 2 !== 0);
+
+  document.querySelector("button").style.display = "none";
+  gerarCartas(quantidade);
 }
 
+function gerarCartas(quantidade) {
+  const imagensSelecionadas = listaImagens.slice(0, quantidade / 2);
+  const cartas = [...imagensSelecionadas, ...imagensSelecionadas];
+  embaralhar(cartas);
 
-function darAsCartas(quantidade) {
-  //identificar as cartas
-    let dividirCartas = quantidade / 2;
-    for (let i = 0; i <= quantidade - 1; i++) {
+  const container = document.querySelector(".jogo-da-memoria");
+  container.innerHTML = "";
 
-        imgLista[i] = new Image();
+  cartas.forEach(img => {
+    container.innerHTML += `
+      <div class="carta" data-identifier="card" onclick="escolherCarta(this)">
+        <img class="img-frente" data-identifier="front-face" src="imagem/front.png" />
+        <img class="img-verso" data-identifier="back-face" src="${img}" />
+      </div>
+    `;
+  });
+}
 
-        if (i > dividirCartas - 1) {
-        imgLista[i].src = listaImagens[i - dividirCartas];
-        } else {
-        imgLista[i].src = listaImagens[i];
-        }
+function embaralhar(array) {
+  array.sort(() => Math.random() - 0.5);
+}
+
+function escolherCarta(carta) {
+  if (bloqueiaClique || carta.classList.contains("selecionado")) return;
+
+  carta.classList.add("selecionado");
+
+  if (!primeiraCarta) {
+    primeiraCarta = carta;
+    return;
+  }
+
+  segundaCarta = carta;
+  bloqueiaClique = true;
+  jogadas++;
+
+  const img1 = primeiraCarta.querySelector(".img-verso").src;
+  const img2 = segundaCarta.querySelector(".img-verso").src;
+
+  if (img1 === img2) {
+    resetarSelecao();
+
+    if (document.querySelectorAll(".selecionado").length === document.querySelectorAll(".carta").length) {
+      setTimeout(() => {
+        alert(`Você ganhou em ${jogadas} jogadas!`);
+      }, 500);
     }
-    
-    let imgArray = embaralharCartas(imgLista);
-
-    for (let i = 0; i < quantidade; i++) {
-    document.querySelector(".jogo-da-memoria").innerHTML += `
-      <div class="carta" onclick="escolherCarta(this)">
-        <img class="img-frente" src="imagem/front.png"/>
-        <img class="img-verso" src=${imgArray[i].src}/>
-      </div>`;
+  } else {
+    setTimeout(() => {
+      primeiraCarta.classList.remove("selecionado");
+      segundaCarta.classList.remove("selecionado");
+      resetarSelecao();
+    }, 1000);
   }
 }
 
-
-function embaralharCartas(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    // Reposicionando elemento
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  // Retornando array com aleatoriedade
-  return arr;
+function resetarSelecao() {
+  primeiraCarta = null;
+  segundaCarta = null;
+  bloqueiaClique = false;
 }
-
